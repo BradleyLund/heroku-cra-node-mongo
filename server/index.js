@@ -14,13 +14,16 @@ const app = express();
 // using cors so that the response has the correct headers which allow the front end to read the response
 app.use(cors());
 
+app.use(express.json());
+
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, "../react-ui/build")));
 
-require("./routes/new.js")(app);
-require("./routes/home.js")(app);
-require("./routes/delete.js")(app);
-require("./routes/update.js")(app);
+require("./routes/newUser.js")(app);
+require("./routes/login.js")(app);
+require("./routes/getList.js")(app);
+require("./routes/addTodo.js")(app);
+require("./routes/deleteTodo.js")(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -37,13 +40,6 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
-});
-
-// Answer API requests.
-app.get("/api", function (req, res) {
-  res.set("Content-Type", "application/json");
-  res.send('{"message":"Hello from the custom server!"}');
 });
 
 // All remaining requests return the React app, so it can handle routing.
@@ -52,11 +48,10 @@ app.get("*", function (request, response) {
 });
 
 app.listen(PORT, function () {
-  console.error(`Node : listening on port ${PORT}`);
+  console.error(`Now listening on port ${PORT}`);
 });
 
 const uri = process.env.DB_URI;
-console.log(uri);
 mongoose.Promise = global.Promise;
 
 // useMongoClient not working
